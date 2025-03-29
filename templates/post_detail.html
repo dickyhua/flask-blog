@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post.title }} - 博客系统{% endblock %}
+
+{% block content %}
+<div class="container">
+    <article class="blog-post">
+        <h2 class="blog-post-title">{{ post.title }}</h2>
+        <p class="blog-post-meta">
+            {{ post.created_at.strftime('%Y-%m-%d %H:%M') }} by {{ post.author.username }}
+            {% if post.updated_at %}
+            <br>最后更新: {{ post.updated_at.strftime('%Y-%m-%d %H:%M') }}
+            {% endif %}
+        </p>
+        <div class="blog-post-content">
+            {{ post.content | safe }}
+        </div>
+    </article>
+    
+    <div class="mt-4">
+        <a href="{{ url_for('index') }}" class="btn btn-secondary">返回首页</a>
+        {% if current_user.is_authenticated and (current_user.is_admin or current_user.id == post.author.id) %}
+        <a href="{{ url_for('edit_post', post_id=post.id) }}" class="btn btn-primary">编辑</a>
+        <button type="button" class="btn btn-danger" onclick="deletePost('{{ url_for('delete_post', post_id=post.id) }}')">删除</button>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function deletePost(url) {
+    if (confirm('确定要删除这篇文章吗？')) {
+        window.location.href = url
+    }
+}
+</script>
+{% endblock %}

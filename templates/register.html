@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}注册 - 博客系统{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="text-center">注册新用户</h3>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">用户名</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">邮箱</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">密码</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirm_password" class="form-label">确认密码</label>
+                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">注册</button>
+                        <a href="{{ url_for('login') }}" class="btn btn-link">已有账号？去登录</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    box-shadow: 0 1px 3px rgba(0,0,0,.1);
+    border: none;
+}
+
+.card-header {
+    background-color: transparent;
+    border-bottom: none;
+    padding-top: 2rem;
+}
+
+.card-header h3 {
+    margin-bottom: 0;
+    color: #333;
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+.form-label {
+    font-weight: 500;
+    color: #495057;
+}
+
+.form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+.btn-primary {
+    padding: 0.75rem;
+}
+
+.btn-link {
+    color: #6c757d;
+    text-decoration: none;
+}
+
+.btn-link:hover {
+    color: #0d6efd;
+    text-decoration: underline;
+}
+</style>
+{% endblock %}

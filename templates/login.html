@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}登录 - 博客系统{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="text-center">登录</h3>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="username" name="username" placeholder="用户名"
+                            value="{{ request.args.get('username', '') }}" required>
+                        <label for="username">用户名</label>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">密码</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">登录</button>
+                        <a href="{{ url_for('register') }}" class="btn btn-link">没有账号？去注册</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

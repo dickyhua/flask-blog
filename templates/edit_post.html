@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}编辑文章 - 博客系统{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">编辑文章</h2>
+    <form method="POST" id="postForm">
+        <div class="mb-3">
+            <label for="title" class="form-label">标题</label>
+            <input type="text" class="form-control" id="title" name="title" value="{{ post.title }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="editor" class="form-label">内容</label>
+            <textarea id="editor" name="content">{{ post.content | safe }}</textarea>
+        </div>
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary">保存</button>
+            <a href="{{ url_for('manage_posts') }}" class="btn btn-secondary">取消</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+class MyUploadAdapter {
+    constructor(loader) {
+        this.loader = loader;
+    }
+
+    upload() {
+        return this.loader.file
+            .then(file => {
+                const formData = new FormData();
+                formData.append('upload', file);
+
+                return fetch('{{ url_for("upload_image") }}', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'same-origin'
+                });
+            })
+            .then(response => response.json())
+            .then(response => {
+                if (response.error) {
+                    return Promise.reject(response.error.message);
+                }
+                return {
+                    default: response.url
+                };
+            });
+    }
+
+    abort() {
+        // Abort upload if necessary
+    }
+}
+
+function MyCustomUploadAdapterPlugin(editor) {
+    editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+        return new MyUploadAdapter(loader);
+    };
+}
+
+let editor;
+
+ClassicEditor
+    .create(document.querySelector('#editor'), {
+        extraPlugins: [MyCustomUploadAdapterPlugin],
+        toolbar: {
+            items: [
+                'heading',
+                '|',
+                'bold',
+                'italic',
+                'link',
+                'bulletedList',
+                'numberedList',
+                '|',
+                'outdent',
+                'indent',
+                '|',
+                'uploadImage',
+                'blockQuote',
+                'insertTable',
+                'mediaEmbed',
+                'undo',
+                'redo'
+            ]
+        },
+        image: {
+            toolbar: [
+                'imageStyle:inline',
+                'imageStyle:block',
+                'imageStyle:side',
+                '|',
+                'toggleImageCaption',
+                'imageTextAlternative',
+                '|',
+                'resizeImage'
+            ],
+            upload: {
+                types: ['jpeg', 'png', 'gif', 'bmp', 'webp', 'tiff']
+            },
+            resizeOptions: {
+                minHeight: 100,
+                maxHeight: 800,
+                minWidth: 100,
+                maxWidth: 1000
+            }
+        },
+        table: {
+            contentToolbar: [
+                'tableColumn',
+                'tableRow',
+                'mergeTableCells'
+            ]
+        },
+        language: 'zh-cn'
+    })
+    .then(newEditor => {
+        editor = newEditor;
+        console.log('编辑器初始化成功');
+        
+        // 处理表单提交
+        document.querySelector('#postForm').addEventListener('submit', function(e) {
+            // 获取编辑器内容
+            const content = editor.getData();
+            console.log('提交的内容:', content);
+            
+            // 如果标题或内容为空，阻止提交
+            const title = document.querySelector('#title').value.trim();
+            if (!title || !content.trim()) {
+                e.preventDefault();
+                alert('标题和内容不能为空！');
+                return false;
+            }
+        });
+    })
+    .catch(error => {
+        console.error('编辑器初始化失败:', error);
+    });
+</script>
+{% endblock %}
