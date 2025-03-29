@@ -1,4 +1,6 @@
-from app import app, db
+from werkzeug.security import generate_password_hash
+
+from app import app, db, User
 import os
 
 def reset_db():
@@ -17,6 +19,21 @@ def reset_db():
         # 创建所有表
         db.create_all()
         print("已创建新的数据库表")
+
+        # 检查是否已存在管理员用户
+        admin = User.query.filter_by(username='admin').first()
+        if not admin:
+            # 创建管理员用户
+            admin = User(
+                username='admin',
+                password_hash=generate_password_hash('admin123'),
+                is_admin=True
+            )
+            db.session.add(admin)
+            db.session.commit()
+            print("已创建管理员用户 (用户名: admin, 密码: admin123)")
+        else:
+            print("管理员用户已存在，跳过创建")
         
         print("数据库已重置完成！")
 
