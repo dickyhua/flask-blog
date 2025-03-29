@@ -7,7 +7,15 @@ services:
       - "5000:5000"
     volumes:
       - ./static/uploads:/app/static/uploads
+      - ./blog.db:/app/blog.db  # 持久化数据库
     environment:
       - FLASK_APP=app.py
       - FLASK_ENV=production
+      - TZ=Asia/Shanghai  # 设置时区
     restart: unless-stopped
+    networks:
+      - flask_network
+
+networks:
+  flask_network:
+    driver: bridge
